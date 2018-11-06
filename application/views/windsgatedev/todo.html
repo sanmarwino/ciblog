@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <title>Practical JavaScript</title>
+  </head>
+
+  <body>
+    <button id='toggle-all-button'>Toggle All</button>
+    <button id='add-button'>Add</button>
+    <input id='add-input'>
+
+    <ul></ul>
+
+    <script>
+      // It should have a place to store todos.
+      var todos = [];
+      // It should have a function to display todos.
+      function displayTodos() {
+        var todosUl = document.querySelector('ul');
+        todosUl.innerHTML = '';
+        for (var i = 0; i < todos.length; i++) {
+          var todoLi = document.createElement('li');
+          if (todos[i].completed === true) {
+            todoLi.textContent = '(x) ' + todos[i].todoText;
+          } else {
+            todoLi.textContent = '( ) ' + todos[i].todoText;
+          }
+          todoLi.appendChild(createEditButton(i));
+          todoLi.appendChild(createToggleButton(i));
+          todoLi.appendChild(createRemoveButton(i));
+          todosUl.appendChild(todoLi);
+        }
+      }
+      // It should have a function to add a todo.
+      function add(initialTodoText) {
+        todos.push({
+          todoText: initialTodoText,
+          completed: false
+        });
+        displayTodo();
+      }
+      // It should have a function to edit a todo.
+      function edit(position, newTodoText) {
+        todos[position].todoText = newTodoText;
+        displayTodos();
+      }
+      // It should have a function to remove a todo.
+      function remove(position) {
+        todos.splice(position, 1);
+        displayTodos();
+      }
+      // It should have a function to toggle a todo.
+      function toggle(position) {
+        todos[position].completed = !todos[position].completed;
+        displayTodos();
+      }
+      // It should have a function to toggle all todos.
+      function toggleAll() {
+        var completedTodos = 0;
+        // Get number of completed todos.
+        for (var i = 0; i < todos.length; i++) {
+          if (todos[i].completed === true) {
+            completedTodos++;
+          }    
+        }
+        // Case 1: If everything's true, make everything false.
+        if (completedTodos === todos.length) {
+          for (var i = 0; i < todos.length; i++) {
+            todos[i].completed = false;
+          }
+        // Case 2: Otherwise, make everything true.          
+        } else {
+          for (var i = 0; i < todos.length; i++) {
+            todos[i].completed = true;  
+          }
+        }
+        displayTodos();
+      }
+      function createRemoveButton(position) {
+        var removeButton = document.createElement('button');
+        removeButton.textContent = 'Remove';
+        removeButton.id = 'remove-' + position;
+        removeButton.addEventListener('click', function (clickEvent) {
+          remove(clickEvent.target.id.split('-')[1]);
+        });
+        return removeButton;
+      }
+      function createToggleButton(position) {
+        var toggleButton = document.createElement('button');
+        toggleButton.textContent = 'Toggle';
+        toggleButton.id = 'toggle-' + position;
+        toggleButton.addEventListener('click', function (clickEvent) {
+          toggle(clickEvent.target.id.split('-')[1]);          
+        });
+        return toggleButton;
+      }
+      function createEditButton(position) {
+        var editButton = document.createElement('button');
+        editButton.textContent = 'Edit';
+        editButton.id = 'edit-' + position;
+        editButton.addEventListener('click', function (clickEvent) {
+          var newTodoText = prompt('Edit');
+          edit(clickEvent.target.id.split('-')[1], newTodoText);
+        });
+        return editButton;
+      }
+      var toggleAllButton = document.getElementById('toggle-all-button');
+      toggleAllButton.addEventListener('click', toggleAll);
+      var addButton = document.getElementById('add-button');
+      var addInput = document.getElementById('add-input');
+      addButton.addEventListener('click', function () {
+        add(addInput.value);
+        addInput.value = '';
+      });
+    </script>
+  </body>
+</html>
